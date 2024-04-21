@@ -22,8 +22,6 @@ router.post('/:postId/delete', blogpost_controller.blogpost_delete_post);
 router.get('/:postId/create-comment', comment_controller.comment_create_get);
 router.post('/:postId/create-comment', comment_controller.comment_create_post);
 
-router.get('/:postId/comment/:commentId/reply', comment_controller.comment_reply_get);
-router.post('/:postId/comment/:commentId/reply', comment_controller.comment_reply_post);
 router.get('/:postId/comment/:commentId/toggle-like', comment_controller.like_get);
 router.post('/:postId/comment/:commentId/toggle-like', comment_controller.like_post);
 

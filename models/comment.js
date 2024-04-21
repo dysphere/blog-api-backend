@@ -6,7 +6,6 @@ const CommentSchema = new Schema({
     commenter: {type: Schema.Types.ObjectId, ref: "Commenter", required: true},
     text: {type: String, required: true},
     date_posted: {type: Date, required: true},
-    replies: [{type: Schema.Types.ObjectId, ref: "Comment"}],
     blog_post: {type: Schema.Types.ObjectId, ref: "Blogpost", required: true}
 });
 
