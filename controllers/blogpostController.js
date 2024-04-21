@@ -12,20 +12,9 @@ exports.blogpost_get = asyncHandler(async (req, res, next) => {
     res.json(blogpost);
 });
 
-exports.blogpost_create_get = asyncHandler(async (req, res, next) => {
-
-});
 
 exports.blogpost_create_post = [];
 
-exports.blogpost_update_get = asyncHandler(async (req, res, next) => {
-
-});
-
 exports.blogpost_update_post = [];
-
-exports.blogpost_delete_get = asyncHandler(async (req, res, next) => {
-
-});
 
 exports.blogpost_delete_post = [];
