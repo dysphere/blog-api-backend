@@ -1,10 +1,13 @@
 const express = require('express');
+const jwt = require("jsonwebtoken");
 const router = express.Router();
 
 const author_controller = require('../controllers/authorController');
 const blogpost_controller = require('../controllers/blogpostController');
 const comment_controller = require('../controllers/commentController');
 const commenter_controller = require('../controllers/commenterController');
+
+
 
 //routes for looking at list of blog posts and at blog post itself
 router.get('/', blogpost_controller.index);

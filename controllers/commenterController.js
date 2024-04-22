@@ -1,3 +1,4 @@
+const User = require('../models/user');
 const asyncHandler = require("express-async-handler");
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -25,10 +26,33 @@ body("password", "Password must not be empty.")
   .escape(),
 
   async (req, res, next) => {
-    
+    try {
+        bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
+            // if err, do something
+            if (err) {
+                return next(err);
+            }
+            // otherwise, store hashedPassword in DB
+            else {
+                const user = new User({
+                    first_name: req.body.first_name,
+                    last_name: req.body.last_name,
+                    username: req.body.username,
+                    password: hashedPassword,
+                    role: "Commenter"
+                  });
+                  const result = await user.save();
+            }
+          });
+    }
+    catch(error) {
+        next(error);
+    }
   }
 ];
 
-exports.commenter_login_post = [];
+exports.commenter_login_post = [
+    
+];
 
 exports.commenter_logout_post = [];
