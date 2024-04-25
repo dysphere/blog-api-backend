@@ -13,8 +13,27 @@ exports.blogpost_get = asyncHandler(async (req, res, next) => {
 });
 
 
-exports.blogpost_create_post = [];
+exports.blogpost_create_post = [
+    body("title", "Title must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("content", "Content must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("tag", "Tag must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+
+  async (req, res, next) => {
+
+  }
+];
 
 exports.blogpost_update_post = [];
 
-exports.blogpost_delete_post = [];
+exports.blogpost_delete_post = asyncHandler(async (req, res, next) => {
+    
+});

@@ -49,6 +49,27 @@ body("password", "Password must not be empty.")
   }
 ];
 
-exports.author_login_post = [];
+exports.author_login_post = asyncHandler( async (req, res, next) => {
+    try {
+    const username = await User.findOne({username: req.body.username});
+    const match = await bcrypt.compare(username.password, req.body.password);
+    if (!username) {
+        return res.status(401).json({ message: "Incorrect username" });
+      };
+      if (!match) {
+        return res.status(401).json({ message: "Incorrect password" });
+      };
+      const payload = {
+        "username": req.body.username,
+        "role": "Author"
+        }
+    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' })
+
+    res.send(token)
+    }
+    catch(err) {
+        next(err);
+    }
+});
 
 exports.author_logout_post = [];
