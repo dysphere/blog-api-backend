@@ -73,5 +73,3 @@ exports.commenter_login_post = asyncHandler( async (req, res, next) => {
         next(err);
     }
 });
-
-exports.commenter_logout_post = [];

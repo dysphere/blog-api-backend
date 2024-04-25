@@ -71,5 +71,3 @@ exports.author_login_post = asyncHandler( async (req, res, next) => {
         next(err);
     }
 });
-
-exports.author_logout_post = [];

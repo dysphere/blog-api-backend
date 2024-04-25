@@ -39,8 +39,14 @@ exports.comment_create_post = [
 exports.like_post = asyncHandler(async (req, res, next) => {
     try {
         const comment = await Comment.findById(req.params.commentId).populate("User").exec();
-        if (comment) {}
-        else {}
+        const user = await User.findOne(req.username);
+        const isLiked = comment.liked.some(id => id.equals(user._id));
+        if (isLiked) {
+            await Comment.updateOne({ _id: req.params.commentId }, { $pull: { liked: user } });
+        }
+        else {
+            await Comment.updateOne({ _id: req.params.commentId }, { $push: { liked: user } });
+        }
     }
     catch(err) {
         next(err);

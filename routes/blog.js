@@ -48,11 +48,9 @@ router.post('/:postId/comment/:commentId/delete', authorization(["Author", "Comm
 //routes for signing up and logging in commenters
 router.post('/sign-up', commenter_controller.commenter_create_post);
 router.post('/log-in', commenter_controller.commenter_login_post);
-router.post('/log-out', commenter_controller.commenter_logout_post)
 
 //routes for signing up and logging in authors
 router.post('/author-sign-up', author_controller.author_create_post);
 router.post('/author-log-in', author_controller.author_login_post);
-router.post('/author-log-out', author_controller.author_logout_post);
 
 module.exports = router;
