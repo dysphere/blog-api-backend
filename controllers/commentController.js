@@ -38,8 +38,8 @@ exports.comment_create_post = [
 
 exports.like_post = asyncHandler(async (req, res, next) => {
     try {
-        const comment = await Comment.findById(req.params.commentId);
-        if (comment.likes) {}
+        const comment = await Comment.findById(req.params.commentId).populate("User").exec();
+        if (comment) {}
         else {}
     }
     catch(err) {
@@ -52,8 +52,30 @@ exports.comment_update_post = [
     .trim()
     .isLength({ min: 1 })
     .escape(),
+
+    async (req, res, next) => {
+        try {
+            const comment = await Comment.findById(req.params.commentId).populate("User").exec();
+            if (comment.commenter.username === req.username) {
+                const update = {text: req.body.text, date_posted: new Date()};
+                await Comment.findByIdAndUpdate(req.params.commentId, update).exec();
+            }
+            else {
+                return res.status(403).json({ message: "Access denied: Unauthorized role" });
+            }
+        }
+        catch(err) {
+            next(err);
+        }
+    }
 ];
 
 exports.comment_delete_post = asyncHandler(async (req, res, next) => {
-    await Comment.findByIdAndDelete(req.params.commentId);
+    const comment = await Comment.findById(req.params.commentId).populate("User").exec();
+    if (comment.commenter.username === req.username) {
+        await Comment.findByIdAndDelete(req.params.commentId).exec();
+    }
+    else {
+        return res.status(403).json({ message: "Access denied: Unauthorized role" });
+    }
 });
