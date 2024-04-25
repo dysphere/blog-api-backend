@@ -19,7 +19,7 @@ exports.comment_create_post = [
     async (req, res, next) => {
         try {
         const blogpost = await Blogpost.findById(req.params.postId);
-        const user = await User.findOne({user: req.username});
+        const user = await User.findOne({user: req.user.payload.username});
         const comment = new Comment({
             commenter: user,
             text: req.body.text,
@@ -39,7 +39,7 @@ exports.comment_create_post = [
 exports.like_post = asyncHandler(async (req, res, next) => {
     try {
         const comment = await Comment.findById(req.params.commentId).populate("User").exec();
-        const user = await User.findOne(req.username);
+        const user = await User.findOne(req.user.payload.username);
         const isLiked = comment.liked.some(id => id.equals(user._id));
         if (isLiked) {
             await Comment.updateOne({ _id: req.params.commentId }, { $pull: { liked: user } });
@@ -62,12 +62,12 @@ exports.comment_update_post = [
     async (req, res, next) => {
         try {
             const comment = await Comment.findById(req.params.commentId).populate("User").exec();
-            if (comment.commenter.username === req.username) {
+            if (comment.commenter.username === req.user.payload.username) {
                 const update = {text: req.body.text, date_posted: new Date()};
                 await Comment.findByIdAndUpdate(req.params.commentId, update).exec();
             }
             else {
-                return res.status(403).json({ message: "Access denied: Unauthorized role" });
+                res.status(403).json({ message: "Access denied: Unauthorized role" });
             }
         }
         catch(err) {
@@ -78,10 +78,10 @@ exports.comment_update_post = [
 
 exports.comment_delete_post = asyncHandler(async (req, res, next) => {
     const comment = await Comment.findById(req.params.commentId).populate("User").exec();
-    if (comment.commenter.username === req.username) {
+    if (comment.commenter.username === req.user.payload.username) {
         await Comment.findByIdAndDelete(req.params.commentId).exec();
     }
     else {
-        return res.status(403).json({ message: "Access denied: Unauthorized role" });
+        res.status(403).json({ message: "Access denied: Unauthorized role" });
     }
 });

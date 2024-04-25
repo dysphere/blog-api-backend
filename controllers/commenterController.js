@@ -41,7 +41,7 @@ body("password", "Password must not be empty.")
                     password: hashedPassword,
                     role: "Commenter"
                   });
-                  const result = await user.save();
+                  await user.save();
             }
           });
     }
@@ -51,25 +51,7 @@ body("password", "Password must not be empty.")
   }
 ];
 
-exports.commenter_login_post = asyncHandler( async (req, res, next) => {
-    try {
-    const username = await User.findOne({username: req.body.username});
-    const match = await bcrypt.compare(username.password, req.body.password);
-    if (!username) {
-        return res.status(401).json({ message: "Incorrect username" });
-      };
-      if (!match) {
-        return res.status(401).json({ message: "Incorrect password" });
-      };
-      const payload = {
-        "username": req.body.username,
-        "role": "Commenter"
-        }
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' })
-
-    res.send(token)
-    }
-    catch(err) {
-        next(err);
-    }
-});
+exports.commenter_login_post = asyncHandler(async (req, res, next) => {
+    const token = jwt.sign({ username:req.body.username, role: "Commenter" }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    res.json({ token });
+})
