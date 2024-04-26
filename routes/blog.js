@@ -1,5 +1,5 @@
 const express = require('express');
-const jwt = require("jsonwebtoken");
+const passport = require('passport');
 const router = express.Router();
 
 const author_controller = require('../controllers/authorController');

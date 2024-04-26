@@ -67,7 +67,7 @@ exports.comment_update_post = [
                 await Comment.findByIdAndUpdate(req.params.commentId, update).exec();
             }
             else {
-                res.status(403).json({ message: "Access denied: Unauthorized role" });
+                return res.status(403).json({ message: "Access denied: Unauthorized role" });
             }
         }
         catch(err) {
@@ -82,6 +82,6 @@ exports.comment_delete_post = asyncHandler(async (req, res, next) => {
         await Comment.findByIdAndDelete(req.params.commentId).exec();
     }
     else {
-        res.status(403).json({ message: "Access denied: Unauthorized role" });
+        return res.status(403).json({ message: "Access denied: Unauthorized role" });
     }
 });

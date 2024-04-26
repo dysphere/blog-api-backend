@@ -75,7 +75,7 @@ exports.blogpost_update_post = [
             await Blogpost.findByIdAndUpdate(req.params.postId, update).populate("User").exec();
         }
         else {
-            res.status(403).json({ message: "Access denied: Unauthorized role" });
+            return res.status(403).json({ message: "Access denied: Unauthorized role" });
         }
     }
     catch(err) {
@@ -90,6 +90,6 @@ exports.blogpost_delete_post = asyncHandler(async (req, res, next) => {
         await Blogpost.findByIdAndDelete(req.params.postId).exec();
     }
     else {
-        res.status(403).json({ message: "Access denied: Unauthorized role" });
+        return res.status(403).json({ message: "Access denied: Unauthorized role" });
     }
 });

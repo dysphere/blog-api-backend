@@ -1,4 +1,6 @@
 const User = require('../models/user');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
 
@@ -39,7 +41,7 @@ body("password", "Password must not be empty.")
                     password: hashedPassword,
                     role: "Author"
                   });
-                  const result = await user.save();
+                  await user.save();
             }
           });
     }
