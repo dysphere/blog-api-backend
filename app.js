@@ -4,9 +4,13 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const logger = require('morgan');
+const bcrypt = require("bcryptjs");
+
 const mongoose = require("mongoose");
 const User = require("./models/user");
+
 const passport = require('passport');
+
 const LocalStrategy = require("passport-local").Strategy;
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
@@ -56,7 +60,7 @@ passport.use(
 );
 
 passport.use(new JwtStrategy(opts, (jwt_payload, done) => {
-  User.findById(jwt_payload.id, (err, user) => {
+  User.findOne(jwt_payload.username, (err, user) => {
     if (err) {
       return done(err, false);
     }
@@ -68,24 +72,6 @@ passport.use(new JwtStrategy(opts, (jwt_payload, done) => {
     }
   });
 }));
-
-passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
-
-passport.deserializeUser(async (id, done) => {
-  try {
-    const user = await User.findById(id);
-    done(null, user);
-  } catch(err) {
-    done(err);
-  };
-});
-
-app.use((req, res, next) => {
-  res.locals.currentUser = req.user;
-  next();
-});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

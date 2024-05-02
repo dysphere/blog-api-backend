@@ -7,7 +7,7 @@ const { body, validationResult } = require("express-validator");
 exports.comments_get = asyncHandler(async (req, res, next) => {
     const blogpost = await Blogpost.findById(req.params.postId).exec();
     const comments = await Comment.find({blog_post: blogpost}).populate("Blogpost").exec();
-    res.json(comments);
+    return res.status(200).json({comments});
 });
 
 exports.comment_create_post = [
@@ -28,6 +28,7 @@ exports.comment_create_post = [
             liked: []
         });
         await comment.save();
+        return res.status(200).send("Comment created");
         }
         catch(err) {
             next(err);
@@ -43,9 +44,11 @@ exports.like_post = asyncHandler(async (req, res, next) => {
         const isLiked = comment.liked.some(id => id.equals(user._id));
         if (isLiked) {
             await Comment.updateOne({ _id: req.params.commentId }, { $pull: { liked: user } });
+            return res.status(200).send("User created");
         }
         else {
             await Comment.updateOne({ _id: req.params.commentId }, { $push: { liked: user } });
+            return res.status(200).send("User created");
         }
     }
     catch(err) {
@@ -65,6 +68,7 @@ exports.comment_update_post = [
             if (comment.commenter.username === req.user.payload.username) {
                 const update = {text: req.body.text, date_posted: new Date()};
                 await Comment.findByIdAndUpdate(req.params.commentId, update).exec();
+                return res.status(200).send("User created");
             }
             else {
                 return res.status(403).json({ message: "Access denied: Unauthorized role" });
@@ -80,6 +84,7 @@ exports.comment_delete_post = asyncHandler(async (req, res, next) => {
     const comment = await Comment.findById(req.params.commentId).populate("User").exec();
     if (comment.commenter.username === req.user.payload.username) {
         await Comment.findByIdAndDelete(req.params.commentId).exec();
+        return res.status(200).send("User created");
     }
     else {
         return res.status(403).json({ message: "Access denied: Unauthorized role" });

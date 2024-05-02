@@ -27,6 +27,8 @@ body("password", "Password must not be empty.")
 
   async (req, res, next) => {
     try {
+      const user = await User.findOne({username: req.body.username})
+      if (!user) {
         bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
             // if err, do something
             if (err) {
@@ -42,8 +44,13 @@ body("password", "Password must not be empty.")
                     role: "Author"
                   });
                   await user.save();
+                  return res.status(200).send("User created");
             }
           });
+      }
+      else {
+        throw new Error('User already exists' );
+      }
     }
     catch(error) {
         next(error);
@@ -51,7 +58,7 @@ body("password", "Password must not be empty.")
   }
 ];
 
-exports.author_login_post = asyncHandler( async (req, res, next) => {
-    const token = jwt.sign({ username:req.body.username, role: "Author" }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.json({ token });
-});
+exports.author_login_post = function(req, res, next) {
+    const token = jwt.sign({ username: req.user.username, role: "Author" }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    return res.status(200).json({ token });
+};
