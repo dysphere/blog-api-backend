@@ -4,20 +4,19 @@ const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
 
 exports.index = asyncHandler(async (req, res, next) => {
-    const blogposts = await Blogpost.find({published: true}).populate("Author").sort({date_posted: -1}).exec();
+    const blogposts = await Blogpost.find({published: true}, "title content tag date_posted").populate("author").sort({date_posted: -1});
     return res.status(200).json(blogposts);
 });
 
 exports.author_index = asyncHandler(async (req, res, next) => {
-    const blogposts = await Blogpost.find().populate("Author").sort({date_posted: -1}).exec();
+    const blogposts = await Blogpost.find({}, "author title content tag date_posted").populate("author").sort({date_posted: -1});
     return res.status(200).json(blogposts);
 })
 
 exports.blogpost_get = asyncHandler(async (req, res, next) => {
-    const blogpost = await Blogpost.findById(req.params.postId).populate("Author").exec();
+    const blogpost = await Blogpost.findById(req.params.postId).populate("author");
     return res.status(200).json(blogpost);
 });
-
 
 exports.blogpost_create_post = [
     body("title", "Title must not be empty.")
@@ -64,7 +63,7 @@ exports.blogpost_update_post = [
 
   async (req, res, next) => {
     try {
-        const blogpost = await Blogpost.findById(req.params.postId).populate("User").exec();
+        const blogpost = await Blogpost.findById(req.params.postId).populate("author");
         if (blogpost.author.username === req.user.payload.username) {
             const update = {
                 title: req.body.title,
@@ -73,7 +72,7 @@ exports.blogpost_update_post = [
                 date_posted: new Date(),
                 published: !!req.body.published
             }
-            await Blogpost.findByIdAndUpdate(req.params.postId, update).populate("User").exec();
+            await Blogpost.findByIdAndUpdate(req.params.postId, update).populate("author");
             return res.status(200).send("Blog post updated");
         }
         else {
@@ -87,9 +86,9 @@ exports.blogpost_update_post = [
 ];
 
 exports.blogpost_delete_post = asyncHandler(async (req, res, next) => {
-    const blogpost = await Blogpost.findById(req.params.postId).populate("User").exec();
+    const blogpost = await Blogpost.findById(req.params.postId).populate("author");
     if (blogpost.author.username === req.user.payload.username) {
-        await Blogpost.findByIdAndDelete(req.params.postId).exec();
+        await Blogpost.findByIdAndDelete(req.params.postId);
         return res.status(200).send("Blog post deleted");
     }
     else {
