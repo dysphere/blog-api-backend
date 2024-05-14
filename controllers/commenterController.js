@@ -59,6 +59,6 @@ body("password", "Password must not be empty.")
 ];
 
 exports.commenter_login_post = function(req, res, next) {
-  const token = jwt.sign({ username: req.user.username, role: "Commenter" }, process.env.JWT_SECRET, { expiresIn: '1h' });
+  const token = jwt.sign({ username: req.user.username, role: "Commenter" }, process.env.JWT_SECRET, { expiresIn: '5h' });
   return res.status(200).json({ token });
 };

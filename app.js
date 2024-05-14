@@ -19,10 +19,6 @@ require('dotenv').config();
 const indexRouter = require('./routes/index');
 const blogRouter = require('./routes/blog');
 
-const opts = {};
-opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-opts.secretOrKey = process.env.JWT_SECRET;
-
 const mongoDb = process.env.MONGODB_URI;
 mongoose.connect(mongoDb);
 const db = mongoose.connection;
@@ -31,7 +27,6 @@ db.on("error", console.error.bind(console, "mongo connection error"));
 const app = express();
 
 app.use(cors());
-app.use(passport.initialize());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -41,7 +36,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/blog', blogRouter);
 
-passport.use(
+passport.use('local', 
   new LocalStrategy(async (username, password, done) => {
     try {
       const user = await User.findOne({ username: username });
@@ -59,19 +54,27 @@ passport.use(
   })
 );
 
-passport.use(new JwtStrategy(opts, (jwt_payload, done) => {
-  User.findOne(jwt_payload.username, (err, user) => {
-    if (err) {
-      return done(err, false);
-    }
+const opts = {};
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+opts.secretOrKey = process.env.JWT_SECRET;
+
+passport.use('jwt', new JwtStrategy(opts, async (jwt_payload, done) => {
+  try {
+    const user = await User.findOne({username: jwt_payload.username});
     if (user) {
       user.payload = jwt_payload;
       return done(null, user);
-    } else {
+    }
+    else {
       return done(null, false);
     }
-  });
+  }
+  catch(err) {
+    return done(err);
+  }
 }));
+
+app.use(passport.initialize());
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

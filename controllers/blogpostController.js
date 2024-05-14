@@ -5,17 +5,17 @@ const { body, validationResult } = require("express-validator");
 
 exports.index = asyncHandler(async (req, res, next) => {
     const blogposts = await Blogpost.find({published: true}).populate("Author").sort({date_posted: -1}).exec();
-    return res.status(200).json({blogposts});
+    return res.status(200).json(blogposts);
 });
 
 exports.author_index = asyncHandler(async (req, res, next) => {
     const blogposts = await Blogpost.find().populate("Author").sort({date_posted: -1}).exec();
-    return res.status(200).json({blogposts});
+    return res.status(200).json(blogposts);
 })
 
 exports.blogpost_get = asyncHandler(async (req, res, next) => {
     const blogpost = await Blogpost.findById(req.params.postId).populate("Author").exec();
-    return res.status(200).json({blogpost});
+    return res.status(200).json(blogpost);
 });
 
 
@@ -34,7 +34,7 @@ exports.blogpost_create_post = [
     .escape(),
 
   async (req, res, next) => {
-    const blogauthor = await User.findOne({username: req.user.payload.username});
+    const blogauthor = await User.findOne({username: req.user.payload.username, role: req.user.payload.role});
     const blogpost = new Blogpost({
         author: blogauthor,
         title: req.body.title,
