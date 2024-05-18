@@ -4,6 +4,11 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { body, validationResult } = require("express-validator");
 
+exports.username_get = asyncHandler(async (req, res, next) => {
+  const user = await User.findOne({username: req.user.payload.username});
+  return res.status(200).json(user);
+});
+
 exports.commenter_create_post = [
     // Validate and sanitize fields.
   body("first_name", "First name must not be empty.")

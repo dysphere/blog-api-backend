@@ -4,12 +4,12 @@ const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
 
 exports.index = asyncHandler(async (req, res, next) => {
-    const blogposts = await Blogpost.find({published: true}, "title content tag date_posted").populate("author").sort({date_posted: -1});
+    const blogposts = await Blogpost.find({published: true}).populate("author").sort({date_posted: -1});
     return res.status(200).json(blogposts);
 });
 
 exports.author_index = asyncHandler(async (req, res, next) => {
-    const blogposts = await Blogpost.find({}, "author title content tag date_posted").populate("author").sort({date_posted: -1});
+    const blogposts = await Blogpost.find({}).populate("author").sort({date_posted: -1});
     return res.status(200).json(blogposts);
 })
 

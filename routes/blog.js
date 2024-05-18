@@ -11,7 +11,10 @@ const commenter_controller = require('../controllers/commenterController');
 router.get('/', blogpost_controller.index);
 router.get('/index', blogpost_controller.author_index);
 router.get('/:postId', blogpost_controller.blogpost_get);
-router.get('/:postId/comments', comment_controller.comments_get)
+router.get('/:postId/comments', comment_controller.comments_get);
+
+//route for looking at username of user currently logged in
+router.get('/user', passport.authenticate('jwt', { session: false }), commenter_controller.username_get);
 
 //routes for making and updating blog posts
 router.post('/create-post', passport.authenticate('jwt', { session: false }), blogpost_controller.blogpost_create_post);

@@ -1,3 +1,4 @@
+const { DateTime } = require("luxon");
 const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
@@ -10,5 +11,13 @@ const BlogpostSchema = new Schema({
     date_posted: {type: Date, required: true},
     published: {type: Boolean, required: true}
 });
+
+BlogpostSchema.virtual("date_posted_formatted").get(function() {
+    return DateTime.fromJSDate(this.date_posted).toLocaleString(DateTime.DATE_MED);
+});
+
+BlogpostSchema.set('toJSON', {
+    virtuals: true,
+  });
 
 module.exports = mongoose.model("Blogpost", BlogpostSchema);
