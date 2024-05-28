@@ -13,7 +13,7 @@ const BlogpostSchema = new Schema({
 });
 
 BlogpostSchema.virtual("date_posted_formatted").get(function() {
-    return DateTime.fromJSDate(this.date_posted).toLocaleString(DateTime.DATE_MED);
+    return DateTime.fromJSDate(this.date_posted).toLocaleString(DateTime.DATETIME_FULL);
 });
 
 BlogpostSchema.set('toJSON', {

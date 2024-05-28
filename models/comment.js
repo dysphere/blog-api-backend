@@ -12,7 +12,7 @@ const CommentSchema = new Schema({
 });
 
 CommentSchema.virtual("date_posted_formatted").get(function() {
-    return DateTime.fromJSDate(this.date_posted).toLocaleString(DateTime.DATE_MED);
+    return DateTime.fromJSDate(this.date_posted).toLocaleString(DateTime.DATETIME_SHORT);
 });
 
 CommentSchema.set('toJSON', {
