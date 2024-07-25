@@ -65,7 +65,7 @@ exports.comment_update_post = [
     async (req, res, next) => {
         try {
             const comment = await Comment.findById(req.params.commentId).populate("commenter");
-            if (comment.commenter.username === req.user.payload.username) {
+            if ( req.user.payload.role === "Author") {
                 const update = {text: req.body.text, date_posted: new Date()};
                 await Comment.findByIdAndUpdate(req.params.commentId, update);
                 return res.status(200).send("Comment updated");
@@ -82,7 +82,7 @@ exports.comment_update_post = [
 
 exports.comment_delete_post = asyncHandler(async (req, res, next) => {
     const comment = await Comment.findById(req.params.commentId).populate("commenter");
-    if (comment.commenter.username === req.user.payload.username) {
+    if (req.user.payload.role === "Author") {
         await Comment.findByIdAndDelete(req.params.commentId);
         return res.status(200).send("Comment deleted");
     }
